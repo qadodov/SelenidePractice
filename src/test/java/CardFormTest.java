@@ -1,8 +1,6 @@
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.ElementsCollection;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -13,24 +11,7 @@ import java.time.format.FormatStyle;
 import static com.codeborne.selenide.Condition.appear;
 import static com.codeborne.selenide.Selenide.*;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
-
 public class CardFormTest {
-
-    private WebDriver driver;
-
-    @BeforeAll
-    public void setUpAll() {
-        WebDriverManager.chromedriver().setup();
-    }
-
-    @BeforeEach
-    public void setUp() {
-        Configuration.browserSize = "1280x720";
-        Configuration.browser = "chrome";
-        Configuration.headless = true;
-    }
 
     @Test
     public void shouldShowSuccessNotification() {
@@ -38,8 +19,8 @@ public class CardFormTest {
         LocalDate currentDayPlusThreeDays = LocalDate.now().getChronology().dateNow().plusDays(3);
         String threeDaysFromNow = currentDayPlusThreeDays.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
 
-//        Configuration.browserSize = "1280x720";
-//        Configuration.browser = "chrome";
+        Configuration.browserSize = "1280x720";
+        Configuration.browser = "chrome";
         open("http://localhost:9999/");
         $x("//*[@data-test-id=\"city\"]//input").setValue("Ярославль");
         $x("//*[@data-test-id=\"date\"]//input").setValue(threeDaysFromNow);
@@ -53,8 +34,8 @@ public class CardFormTest {
     @Test
     public void sendFormUsingDropdownAndCalendarWidget() {
 
-//        Configuration.browserSize = "1280x720";
-//        Configuration.browser = "chrome";
+        Configuration.browserSize = "1280x720";
+        Configuration.browser = "chrome";
         open("http://localhost:9999/");
         $x("//*[@data-test-id=\"city\"]//input").setValue("Яр");
         ElementsCollection dropDownMenu = $$x("//*[contains(@class, \"menu-item\")]/*");
@@ -70,5 +51,5 @@ public class CardFormTest {
         $x("//*[@data-test-id=\"agreement\"]").click();
         $x("//*[@class=\"button__content\"]/parent::button").click();
         $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(15));
-        }
     }
+}
