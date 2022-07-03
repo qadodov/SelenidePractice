@@ -1,24 +1,31 @@
-import com.codeborne.selenide.*;
-import com.codeborne.selenide.conditions.ConditionHelpers;
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.ElementsCollection;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebElement;
 
-import javax.swing.text.StringContent;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.List;
-import java.util.concurrent.locks.AbstractQueuedSynchronizer;
-import java.util.function.Predicate;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.appear;
 import static com.codeborne.selenide.Selenide.*;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.WebDriver;
 
 public class CardFormTest {
 
+    private WebDriver driver;
+
     @BeforeAll
+    public void setUpAll() {
+        WebDriverManager.chromedriver().setup();
+    }
+
+    @BeforeEach
     public void setUp() {
         Configuration.browserSize = "1280x720";
         Configuration.browser = "chrome";
