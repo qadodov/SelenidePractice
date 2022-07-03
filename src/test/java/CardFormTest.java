@@ -1,5 +1,6 @@
 import com.codeborne.selenide.*;
 import com.codeborne.selenide.conditions.ConditionHelpers;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
 
@@ -17,14 +18,21 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class CardFormTest {
 
+    @BeforeAll
+    public void setUp() {
+        Configuration.browserSize = "1280x720";
+        Configuration.browser = "chrome";
+        Configuration.headless = true;
+    }
+
     @Test
     public void shouldShowSuccessNotification() {
 
         LocalDate currentDayPlusThreeDays = LocalDate.now().getChronology().dateNow().plusDays(3);
         String threeDaysFromNow = currentDayPlusThreeDays.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
 
-        Configuration.browserSize = "1280x720";
-        Configuration.browser = "chrome";
+//        Configuration.browserSize = "1280x720";
+//        Configuration.browser = "chrome";
         open("http://localhost:9999/");
         $x("//*[@data-test-id=\"city\"]//input").setValue("Ярославль");
         $x("//*[@data-test-id=\"date\"]//input").setValue(threeDaysFromNow);
@@ -38,8 +46,8 @@ public class CardFormTest {
     @Test
     public void sendFormUsingDropdownAndCalendarWidget() {
 
-        Configuration.browserSize = "1280x720";
-        Configuration.browser = "chrome";
+//        Configuration.browserSize = "1280x720";
+//        Configuration.browser = "chrome";
         open("http://localhost:9999/");
         $x("//*[@data-test-id=\"city\"]//input").setValue("Яр");
         ElementsCollection dropDownMenu = $$x("//*[contains(@class, \"menu-item\")]/*");
