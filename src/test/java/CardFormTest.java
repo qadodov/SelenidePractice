@@ -29,7 +29,7 @@ public class CardFormTest {
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
         $x("//*[@data-test-id=\"agreement\"]").click();
         $x("//*[@class=\"button__content\"]/parent::button").click();
-        $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(30));
+        $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(15));
     }
 
     @Test
@@ -51,6 +51,6 @@ public class CardFormTest {
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
         $x("//*[@data-test-id=\"agreement\"]").click();
         $x("//*[@class=\"button__content\"]/parent::button").click();
-        $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(30));
+        $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(15));
     }
 }
