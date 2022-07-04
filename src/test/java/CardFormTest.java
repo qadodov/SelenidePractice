@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 import static com.codeborne.selenide.Condition.appear;
+import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Selenide.*;
 
 public class CardFormTest {
@@ -28,7 +29,7 @@ public class CardFormTest {
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
         $x("//*[@data-test-id=\"agreement\"]").click();
         $x("//*[@class=\"button__content\"]/parent::button").click();
-        $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(15));
+        $x("//*[@data-test-id=\"notification\"]").shouldNotBe(hidden, Duration.ofSeconds(15));
     }
 
     @Test
