@@ -2,46 +2,54 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.ElementsCollection;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 
-import static com.codeborne.selenide.Condition.appear;
-import static com.codeborne.selenide.Condition.hidden;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class CardFormTest {
 
+    public String generateDate(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
     @Test
     public void shouldShowSuccessNotification() {
 
-        LocalDate currentDayPlusThreeDays = LocalDate.now().getChronology().dateNow().plusDays(3);
-        String threeDaysFromNow = currentDayPlusThreeDays.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
+        String planningDate = generateDate(4);
 
         Configuration.browserSize = "1280x720";
         Configuration.browser = "chrome";
         open("http://localhost:9999/");
         $x("//*[@data-test-id=\"city\"]//input").setValue("Ярославль");
-        $x("//*[@data-test-id=\"date\"]//input").setValue(threeDaysFromNow);
+        $x("//*[@data-test-id=\"date\"]//input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $x("//*[@data-test-id=\"date\"]//input").setValue(planningDate);
         $x("//*[@name=\"name\"]").setValue("Ильхом Додов");
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
         $x("//*[@data-test-id=\"agreement\"]").click();
         $x("//*[@class=\"button__content\"]/parent::button").click();
-        $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(15));
+        $x("//*[@class=\"notification__content\"]").shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15)).shouldBe(visible);
     }
 
     @Test
     public void sendFormUsingDropdownAndCalendarWidget() {
+
+        String planningDate = generateDate(4);
 
         Configuration.browserSize = "1280x720";
         Configuration.browser = "chrome";
         open("http://localhost:9999/");
         $x("//*[@data-test-id=\"city\"]//input").setValue("Яр");
         ElementsCollection dropDownMenu = $$x("//*[contains(@class, \"menu-item\")]/*");
-        dropDownMenu.last().click();
+        dropDownMenu.find(Condition.exactText("Ярославль")).click();
+
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
+
+        $x("//*[@data-test-id=\"date\"]//input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
         $x("//*[contains(@class, \"icon_name_calendar\")]/../../..").click();
         ElementsCollection calendarDays = $$x("//*[@role=\"gridcell\"]");
         int weekFromNow = LocalDate.now().plusDays(7).getDayOfMonth();
@@ -51,6 +59,6 @@ public class CardFormTest {
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
         $x("//*[@data-test-id=\"agreement\"]").click();
         $x("//*[@class=\"button__content\"]/parent::button").click();
-        $x("//*[@data-test-id=\"notification\"]").shouldBe(appear, Duration.ofSeconds(15));
+        $x("//*[@class=\"notification__content\"]").shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15)).shouldBe(visible);
     }
 }
