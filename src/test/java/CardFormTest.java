@@ -6,6 +6,7 @@ import org.openqa.selenium.Keys;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.visible;
@@ -15,6 +16,11 @@ public class CardFormTest {
 
     public String generateDate(int days) {
         return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+    public String millisSinceDate(int days) {
+        long millis = LocalDate.now().plusDays(days).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return String.valueOf(millis);
     }
 
     @Test
@@ -38,7 +44,7 @@ public class CardFormTest {
     @Test
     public void sendFormUsingDropdownAndCalendarWidget() {
 
-        String planningDate = generateDate(4);
+        String planningDate = generateDate(7);
 
         Configuration.browserSize = "1280x720";
         Configuration.browser = "chrome";
@@ -50,11 +56,19 @@ public class CardFormTest {
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
 
         $x("//*[@data-test-id=\"date\"]//input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        String weekFromNow = millisSinceDate(7);
         $x("//*[contains(@class, \"icon_name_calendar\")]/../../..").click();
-        ElementsCollection calendarDays = $$x("//*[@role=\"gridcell\"]");
-        int weekFromNow = LocalDate.now().plusDays(7).getDayOfMonth();
-        String currentDayPlus7 = Integer.toString(weekFromNow);
-        calendarDays.find(Condition.attributeMatching("innerHTML", currentDayPlus7)).click();
+        ElementsCollection calendarDays = $$x("//*[@class=\"calendar__row\"]//td");
+
+        calendarDays.find(Condition.attribute("data-day", weekFromNow)).click();
+
+//        if (calendarDays.isEmpty()) {
+//            $x("//*[@data-step=\"1\"]").click();
+//            calendarDays = $$x("//*[@class=\"calendar__row\"]//td");
+//        } else {
+//            calendarDays.first().click();
+//        }
+
         $x("//*[@name=\"name\"]").setValue("Ильхом Додов");
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
         $x("//*[@data-test-id=\"agreement\"]").click();
