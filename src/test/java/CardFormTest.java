@@ -18,9 +18,8 @@ public class CardFormTest {
         return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
-    public String millisSinceDate(int days) {
-        long millis = LocalDate.now().plusDays(days).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        return String.valueOf(millis);
+    public int monthOfPlanningDate(int days) {
+        return LocalDate.now().plusDays(days).getMonthValue();
     }
 
     @Test
@@ -44,7 +43,8 @@ public class CardFormTest {
     @Test
     public void sendFormUsingDropdownAndCalendarWidget() {
 
-        String planningDate = generateDate(7);
+        int daysUntilMeeting = 30;
+        String planningDate;
 
         Configuration.browserSize = "1280x720";
         Configuration.browser = "chrome";
@@ -56,18 +56,18 @@ public class CardFormTest {
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
 
         $x("//*[@data-test-id=\"date\"]//input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-        String weekFromNow = millisSinceDate(7);
         $x("//*[contains(@class, \"icon_name_calendar\")]/../../..").click();
-        ElementsCollection calendarDays = $$x("//*[@class=\"calendar__row\"]//td");
-
-        calendarDays.find(Condition.attribute("data-day", weekFromNow)).click();
-
-//        if (calendarDays.isEmpty()) {
-//            $x("//*[@data-step=\"1\"]").click();
-//            calendarDays = $$x("//*[@class=\"calendar__row\"]//td");
-//        } else {
-//            calendarDays.first().click();
-//        }
+        if (monthOfPlanningDate(daysUntilMeeting) > LocalDate.now().plusDays(3).getMonthValue()) {
+            int day = LocalDate.now().plusDays(daysUntilMeeting).getDayOfMonth();
+            $x("//*[@data-step=\"1\"]").click();
+            ElementsCollection calendarDays = $$x("//*[@class=\"calendar__row\"]//td");
+            calendarDays.find(Condition.text(String.valueOf(day))).click();
+        } else {
+            ElementsCollection dates = $$x("//*[@class=\"calendar__row\"]//td");
+            int day = LocalDate.now().plusDays(daysUntilMeeting).getDayOfMonth();
+            dates.find(Condition.text(String.valueOf(day))).click();
+        }
+        planningDate = generateDate(daysUntilMeeting);
 
         $x("//*[@name=\"name\"]").setValue("Ильхом Додов");
         $x("//*[@name=\"phone\"]").setValue("+79998884433");
